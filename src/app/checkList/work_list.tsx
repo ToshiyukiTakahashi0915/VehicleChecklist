@@ -1,27 +1,18 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
+
+import Header from '../../components/Header'
+import WorkItem from '../../components/WorkItem'
 
 const WorkList = (): JSX.Element => {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>車両チェックリスト</Text>
-      </View>
+      <Header title='車両チェックリスト'/>
       <View>
-        <View style={styles.WorkItem}>
-          <Text>WAT</Text>
-        </View>
-        <View style={styles.WorkItem}>
-          <Text>TRT</Text>
-        </View>
-        <View style={styles.WorkItem}>
-          <Text>FRT</Text>
-        </View >
-        <View style={styles.WorkItem}>
-          <Text>SST</Text>
-        </View>
-        <View style={styles.WorkItem}>
-          <Text>BRT</Text>
-        </View >
+        <WorkItem onPress={() => {}} name= 'WAT'/>
+        <WorkItem onPress={() => {}} name= 'TRT'/>
+        <WorkItem onPress={() => {}} name= 'FRT'/>
+        <WorkItem onPress={() => {}} name= 'SST'/>
+        <WorkItem onPress={() => {}} name= 'BRT'/>
       </View>
     </View>
   )
@@ -32,20 +23,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff'
   },
-  header: {
-    backgroundColor: '#467FD3',
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 24,
-    paddingHorizontal: 19
-  },
-  headerTitle: {
-    color: '#000000',
-    fontSize: 20,
-    lineHeight: 32,
-    fontWeight: 'bold'
-  },
   WorkItem: {
     height: 80,
     marginVertical: 20,
@@ -54,6 +31,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#000000'
+  },
+  WorkItemText: {
+    fontSize: 32,
+    fontWeight: 'bold'
   }
 })
 
