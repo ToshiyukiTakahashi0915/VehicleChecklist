@@ -17,12 +17,13 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#467FD3',
     height: 80,
-    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 24,
+    justifyContent: 'flex-end',
+    paddingVertical: 8,
     paddingHorizontal: 19
   },
   headerTitle: {
+    textAlignVertical: 'bottom',
     color: '#000000',
     fontSize: 20,
     lineHeight: 32,

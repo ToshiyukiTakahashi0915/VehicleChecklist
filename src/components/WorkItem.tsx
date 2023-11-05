@@ -1,4 +1,6 @@
-import { Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
+
+const screenWidth = Dimensions.get('window').width
 
 interface Props {
   name: string
@@ -16,8 +18,8 @@ const WorkItem = (props: Props): JSX.Element => {
 
 const styles = StyleSheet.create({
   WorkItem: {
-    height: 80,
-    marginVertical: 20,
+    flex: 1,
+    marginVertical: 32,
     marginHorizontal: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -25,7 +27,7 @@ const styles = StyleSheet.create({
     borderColor: '#000000'
   },
   WorkItemText: {
-    fontSize: 32,
+    fontSize: screenWidth < 400 ? 24 : 32,
     fontWeight: 'bold'
   }
 })
