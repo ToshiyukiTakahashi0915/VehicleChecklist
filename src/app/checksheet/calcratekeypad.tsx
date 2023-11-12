@@ -4,16 +4,57 @@ import {
   View, Text, TouchableOpacity, StyleSheet
 } from 'react-native'
 
+enum opeSym {
+  none,
+  plus,
+  minus,
+  multi,
+  div
+}
+
 interface KeyItem {
   value: string
   customStyle?: StyleProp<ViewStyle | TextStyle>
   onPress: () => void
 }
 
+interface Calc {
+  firstNum: number
+  secondNum: number
+  symbol: opeSym
+}
+
+class Calclater {
+  public calculate (sym: opeSym, FirstNum: number, SecondNum: number): number {
+    const calc: Calc = {
+      firstNum: FirstNum,
+      secondNum: SecondNum,
+      symbol: sym
+    }
+    switch (calc.symbol) {
+      case opeSym.plus:
+        return calc.firstNum + calc.secondNum
+      case opeSym.minus:
+        return calc.firstNum - calc.secondNum
+      case opeSym.multi:
+        return calc.firstNum * calc.secondNum
+      case opeSym.div:
+        return calc.firstNum / calc.secondNum
+      case opeSym.none:
+        return 0
+      default:
+        return 0
+    }
+  }
+}
+
 const CalculatorComponent = (): JSX.Element => {
   const [displayText, setDisplayText] = useState('0')
-  const [isOperatorPressed, setIsOperatorPressed] = useState(false)
-  const [Operator, setOperator] = useState('')
+  let isOperatorPressed = false
+  let operator = opeSym.none
+  let buffNumber = 0
+
+  const calculater = new Calclater()
 
   function customRounding (num: string): string {
     if (num.length > 16) {
@@ -34,7 +75,7 @@ const CalculatorComponent = (): JSX.Element => {
     // 演算子ボタンが押されていた時の処理
     if (isOperatorPressed) {
       setDisplayText(value)
-      setIsOperatorPressed(false)
+      isOperatorPressed = false
       return
     }
     // 演算子ボタンが押されたことがなく0割りをしたことがない処理
@@ -43,37 +84,6 @@ const CalculatorComponent = (): JSX.Element => {
     } else {
       setDisplayText(customRounding(displayText + value))
     }
-  }
-
-  const zeroPress = (): void => {
-    numButtonPress('0')
-  }
-  const onePress = (): void => {
-    numButtonPress('1')
-  }
-  const twoPress = (): void => {
-    numButtonPress('2')
-  }
-  const threePress = (): void => {
-    numButtonPress('3')
-  }
-  const fourPress = (): void => {
-    numButtonPress('4')
-  }
-  const fivePress = (): void => {
-    numButtonPress('5')
-  }
-  const sixPress = (): void => {
-    numButtonPress('6')
-  }
-  const sevenPress = (): void => {
-    numButtonPress('7')
-  }
-  const eightPress = (): void => {
-    numButtonPress('8')
-  }
-  const ninePress = (): void => {
-    numButtonPress('9')
   }
   const connmaPress = (): void => {
     // 0割が行われた時の処理
@@ -89,7 +99,19 @@ const CalculatorComponent = (): JSX.Element => {
     console.log('enterが押されました。')
   }
   const equalPress = (): void => {
-    console.log('equalが押されました。')
+    if (operator === opeSym.none) {
+      return
+    }
+    if (displayText === '0' && operator === opeSym.div) {
+    // 0割り算の時の処理
+      setDisplayText('0で割ることはできません。')
+      operator = opeSym.none
+      buffNumber = 0
+    } else {
+      setDisplayText((calculater.calculate(operator, buffNumber, parseFloat(displayText))).toString())
+      operator = opeSym.none
+      buffNumber = 0
+    }
   }
   const deleatePress = (): void => {
     // 0割が行われた時の処理
@@ -115,16 +137,37 @@ const CalculatorComponent = (): JSX.Element => {
   }
   const clearPress = (): void => {
     setDisplayText('0')
-    setIsOperatorPressed(false)
-    setOperator('')
+    isOperatorPressed = false
+    operator = opeSym.none
+    buffNumber = 0
   }
-  const opePress = (value: string): void => {
-    console.log(
-      'Preaaed value:', value
-    )
-    setIsOperatorPressed(true)
-    setOperator(value)
+  const opePress = (symbol: opeSym): void => {
+    // OpeButtonが連続して押されたときの処理
+    if (isOperatorPressed) {
+      operator = symbol
+      return
+    }
+    // 前回の計算で0割り算が行われた場合
+    if (isNaN(Number(displayText))) {
+      return
+    }
+
+    isOperatorPressed = true
+
+    if (buffNumber === 0) {
+      // 現状の画面の数字を取得
+      buffNumber = parseFloat(displayText)
+      // 押されたボタンの演算子のテキストを取得。
+      operator = symbol
+    } else {
+    // イコールボタンが押されず演算子が続いた場合
+      buffNumber = calculater.calculate(symbol, buffNumber, parseFloat(displayText))
+      setDisplayText(customRounding(buffNumber.toString()))
+      // 押されたボタンの演算子を取得。
+      operator = symbol
+    }
   }
+
   return (
     <View style={styles.container}>
       <View style={styles.calclator}>
@@ -135,35 +178,35 @@ const CalculatorComponent = (): JSX.Element => {
         {/* Row 1 */}
         <View style={styles.row}>
           <Key value="C" onPress={() => { clearPress() } } />
-          <Key value="/" onPress={() => { opePress('/') } } />
-          <Key value="*" onPress={() => { opePress('*') } } />
+          <Key value="/" onPress={() => { opePress(opeSym.div) } } />
+          <Key value="*" onPress={() => { opePress(opeSym.multi) } } />
           <Key value="bs" onPress={() => { deleatePress() } } />
         </View>
         {/* Row 2 */}
         <View style={styles.row}>
-          <Key value="1" onPress={() => { onePress() } } />
-          <Key value="2" onPress={() => { twoPress() } } />
-          <Key value="3" onPress={() => { threePress() } } />
-          <Key value="-" onPress={() => { opePress('-') } } />
+          <Key value="1" onPress={() => { numButtonPress('1') } } />
+          <Key value="2" onPress={() => { numButtonPress('2') } } />
+          <Key value="3" onPress={() => { numButtonPress('3') } } />
+          <Key value="-" onPress={() => { opePress(opeSym.minus) } } />
         </View>
         {/* Row 3 */}
         <View style={styles.row}>
-          <Key value="4" onPress={() => { fourPress() } } />
-          <Key value="5" onPress={() => { fivePress() } } />
-          <Key value="6" onPress={() => { sixPress() } } />
-          <Key value="+" onPress={() => { opePress('+') } } />
+          <Key value="4" onPress={() => { numButtonPress('4') } } />
+          <Key value="5" onPress={() => { numButtonPress('5') } } />
+          <Key value="6" onPress={() => { numButtonPress('6') } } />
+          <Key value="+" onPress={() => { opePress(opeSym.plus) } } />
         </View>
         {/* Row 4 */}
         <View style={{ flexDirection: 'column' }}>
           <View style={styles.row}>
-            <Key value="7" onPress={() => { sevenPress() } } />
-            <Key value="8" onPress={() => { eightPress() } } />
-            <Key value="9" onPress={() => { ninePress() } } />
+            <Key value="7" onPress={() => { numButtonPress('7') } } />
+            <Key value="8" onPress={() => { numButtonPress('8') } } />
+            <Key value="9" onPress={() => { numButtonPress('9') } } />
             <Key value="=" onPress={() => { equalPress() } } />
           </View>
           {/* Row 5 */}
           <View style={styles.row}>
-            <Key value="0" customStyle={styles.zero} onPress={() => { zeroPress() } } />
+            <Key value="0" customStyle={styles.zero} onPress={() => { numButtonPress('0') } } />
             <Key value="." onPress={() => { connmaPress() } } />
             <Key value="enter" onPress={() => { enterPress() } } />
           </View>
