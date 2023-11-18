@@ -1,6 +1,7 @@
 {
   "expo": {
-    "scheme": "VehicleChecklist",
+    "scheme": 
+      "VehicleChecklist",
     "name": "VehicleChecklist",
     "slug": "VehicleChecklist",
     "version": "1.0.0",
@@ -30,6 +31,8 @@
     },
     "plugins": [
       "expo-router"
-    ]
-  }
+    ],
+    "sdkVersion": "49.0.0"
+  },
+  "name": "vehiclechecklist"
 }

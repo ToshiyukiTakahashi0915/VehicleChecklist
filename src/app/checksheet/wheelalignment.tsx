@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
-import { View, Text, TextInput, StyleSheet } from 'react-native'
+import React, { useState, useCallback } from 'react'
+import {
+  ScrollView, View, Text, TouchableOpacity, StyleSheet
+} from 'react-native'
 
 import Header from '../../components/Header'
 
-const WheelAlignment = (): JSX.Element => {
-  const [textValue, setTextValue] = useState('0')
+import CalculatorKeypad from '../../components/calcratekeypad'
 
-  const handlePress = (): void => {
-    setTextValue(textValue + '1')
-  }
+const WheelAlignment = (): JSX.Element => {
+  const [selectedIndex, setSelectedIndex] = useState(null)
+  const [showCalculatorKeypad, setShowCalculatorKeypad] = useState(false)
 
   const tableHead = ['基準値', '移動量', '左輪', '左輪', '右輪', '右輪']
   const CheckTitle = ['′', 'mm', '指示値', '誤差', '指示値', '誤差']
@@ -18,8 +19,58 @@ const WheelAlignment = (): JSX.Element => {
   const tableData4 = ['90', '22.05']
   const tableData5 = ['120', '26.06']
 
+  const [inputData1, setInputData1] = useState(['0', '0', '0', '0'])
+  const [inputData2, setInputData2] = useState(['0', '0', '0', '0'])
+  const [inputData3, setInputData3] = useState(['0', '0', '0', '0'])
+  const [inputData4, setInputData4] = useState(['0', '0', '0', '0'])
+  const [inputData5, setInputData5] = useState(['0', '0', '0', '0'])
+
+  const InputCell = ({ data, index }: { data: number, index: number }): JSX.Element => {
+    let inputData
+    // 与えられたdataに応じて適切なinputDataを選択
+    switch (data) {
+      case 1:
+        inputData = inputData1
+        break
+      case 2:
+        inputData = inputData2
+        break
+      case 3:
+        inputData = inputData3
+        break
+      case 4:
+        inputData = inputData4
+        break
+      case 5:
+        inputData = inputData5
+        break
+      default:
+        inputData = inputData1
+    }
+    return (
+      <TouchableOpacity style={styles.cell}>
+          <Text
+          onPress={() => { handleCellPress(index) }}
+          style={{
+            textAlign: 'center',
+            lineHeight: 35
+          }}>
+          {inputData[index]}
+          </Text>
+      </TouchableOpacity>
+    )
+  }
+
+  // 入力可能なセルがタップされた際のイベントハンドラ
+  // 電卓コンポーネントの表示をtrueにしselectedIndexに
+  // 渡されたindexを渡す
+  const handleCellPress = useCallback((index: any): void => {
+    setSelectedIndex(index)
+    setShowCalculatorKeypad(true)
+  }, [])
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Header title='ホイールアライメントテスタ'/>
       <View style={styles.table}>
         <View style={styles.row}>
@@ -51,57 +102,52 @@ const WheelAlignment = (): JSX.Element => {
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData1[0]}</Text>
           <Text style={styles.cell}>{tableData1[1]}</Text>
-          <Text
-          onPress={() => { handlePress() }}
-          style={styles.cell}>
-          {textValue}
-          </Text>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
+          <InputCell data={1} index= {0}/>
+          <InputCell data={1} index= {1}/>
+          <InputCell data={1} index= {2}/>
+          <InputCell data={1} index= {3}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData2[0]}</Text>
           <Text style={styles.cell}>{tableData2[1]}</Text>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
+          <InputCell data={2} index= {0}/>
+          <InputCell data={2} index= {1}/>
+          <InputCell data={2} index= {2}/>
+          <InputCell data={2} index= {3}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData3[0]}</Text>
           <Text style={styles.cell}>{tableData3[1]}</Text>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
+          <InputCell data={3} index= {0}/>
+          <InputCell data={3} index= {1}/>
+          <InputCell data={3} index= {2}/>
+          <InputCell data={3} index= {3}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData4[0]}</Text>
           <Text style={styles.cell}>{tableData4[1]}</Text>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
+          <InputCell data={4} index= {0}/>
+          <InputCell data={4} index= {1}/>
+          <InputCell data={4} index= {2}/>
+          <InputCell data={4} index= {3}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData5[0]}</Text>
           <Text style={styles.cell}>{tableData5[1]}</Text>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
-          <TextInput style={styles.cell}>'</TextInput>
+          <InputCell data={5} index= {0}/>
+          <InputCell data={5} index= {1}/>
+          <InputCell data={5} index= {2}/>
+          <InputCell data={5} index= {3}/>
         </View>
       </View>
-    </View>
+      {showCalculatorKeypad && <CalculatorKeypad />}
+    </ScrollView>
   )
 }
-
-export default WheelAlignment
 
 const styles = StyleSheet.create({
   container: {
@@ -133,3 +179,5 @@ const styles = StyleSheet.create({
     height: 40
   }
 })
+
+export default WheelAlignment

@@ -5,22 +5,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug in Android Device",
-      "cwd": "${workspaceFolder}",
-      "type": "reactnative",
+      "name": "Debug in Exponent",
       "request": "launch",
-      "platform": "android",
-      "scheme": "exp",
-      "target": "device"
-    },
-    {
-      "name": "Debug in iOS Device",
-      "cwd": "${workspaceFolder}",
       "type": "reactnative",
-      "request": "launch",
-      "platform": "ios",
-      "scheme": "exp",
-      "target": "device"
+      "cwd": "${workspaceFolder}",
+      "platform": "exponent",
+      "expoHostType": "tunnel"
     }
   ]
 }

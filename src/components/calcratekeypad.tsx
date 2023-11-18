@@ -4,6 +4,11 @@ import {
   View, Text, TouchableOpacity, StyleSheet
 } from 'react-native'
 
+interface CalculatorKeypadProps {
+  buffValue: string
+  EnterValue: string
+}
+
 enum opeSym {
   none,
   plus,
@@ -48,20 +53,20 @@ class Calclater {
   }
 }
 
-const CalculatorComponent = (): JSX.Element => {
-  const [displayText, setDisplayText] = useState('0')
-  let isOperatorPressed = false
-  let operator = opeSym.none
-  let buffNumber = 0
+let isOperatorPressed = false
+let operator = opeSym.none
+let buffNumber = 0
 
+const CalculatorKeypad = (): JSX.Element => {
+  const [displayText, setDisplayText] = useState('0')
   const calculater = new Calclater()
 
   function customRounding (num: string): string {
-    if (num.length > 16) {
-      if ((Boolean(num.includes('.'))) && num.indexOf('.') > 16) {
+    if (num.length > 15) {
+      if ((Boolean(num.includes('.'))) && num.indexOf('.') > 15) {
         return '表示できる桁数を超えています。'
       }
-      num = num.substring(0, 16)
+      num = num.substring(0, 15)
     }
     return num
   }
@@ -159,6 +164,9 @@ const CalculatorComponent = (): JSX.Element => {
       buffNumber = parseFloat(displayText)
       // 押されたボタンの演算子のテキストを取得。
       operator = symbol
+      console.log(operator + '初期値4operator')
+      console.log(isOperatorPressed + '初期値4isOperatorPressed')
+      console.log(buffNumber + '初期値4buffnumber')
     } else {
     // イコールボタンが押されず演算子が続いた場合
       buffNumber = calculater.calculate(symbol, buffNumber, parseFloat(displayText))
@@ -280,4 +288,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default CalculatorComponent
+export default CalculatorKeypad
