@@ -4,9 +4,11 @@ import {
   View, Text, TouchableOpacity, StyleSheet
 } from 'react-native'
 
+import Decimal from 'decimal.js'
+
 interface CalculatorKeypadProps {
   buffValue: string
-  EnterValue: string
+  onEnterPress: (value: string) => void
 }
 
 enum opeSym {
@@ -24,41 +26,42 @@ interface KeyItem {
 }
 
 interface Calc {
-  firstNum: number
-  secondNum: number
+  firstNum: Decimal
+  secondNum: Decimal
   symbol: opeSym
 }
 
 class Calclater {
-  public calculate (sym: opeSym, FirstNum: number, SecondNum: number): number {
+  public calculate (sym: opeSym, FirstNum: string, SecondNum: number): string {
     const calc: Calc = {
-      firstNum: FirstNum,
-      secondNum: SecondNum,
+      firstNum: new Decimal(FirstNum),
+      secondNum: new Decimal(SecondNum),
       symbol: sym
     }
     switch (calc.symbol) {
       case opeSym.plus:
-        return calc.firstNum + calc.secondNum
+        return String(calc.firstNum.plus(calc.secondNum))
       case opeSym.minus:
-        return calc.firstNum - calc.secondNum
+        return String(calc.firstNum.minus(calc.secondNum))
       case opeSym.multi:
-        return calc.firstNum * calc.secondNum
+        return String(calc.firstNum.mul(calc.secondNum))
       case opeSym.div:
-        return calc.firstNum / calc.secondNum
+        return String(calc.firstNum.div(calc.secondNum))
       case opeSym.none:
-        return 0
+        return '0'
       default:
-        return 0
+        return '0'
     }
   }
 }
 
 let isOperatorPressed = false
 let operator = opeSym.none
-let buffNumber = 0
+let buffNumber = '0'
 
-const CalculatorKeypad = (): JSX.Element => {
-  const [displayText, setDisplayText] = useState('0')
+const CalculatorKeypad = (props: CalculatorKeypadProps): JSX.Element => {
+  const { buffValue, onEnterPress } = props
+  const [displayText, setDisplayText] = useState(buffValue)
   const calculater = new Calclater()
 
   function customRounding (num: string): string {
@@ -101,7 +104,7 @@ const CalculatorKeypad = (): JSX.Element => {
     setDisplayText(displayText + '.')
   }
   const enterPress = (): void => {
-    console.log('enterが押されました。')
+    onEnterPress(displayText)
   }
   const equalPress = (): void => {
     if (operator === opeSym.none) {
@@ -111,11 +114,11 @@ const CalculatorKeypad = (): JSX.Element => {
     // 0割り算の時の処理
       setDisplayText('0で割ることはできません。')
       operator = opeSym.none
-      buffNumber = 0
+      buffNumber = '0'
     } else {
       setDisplayText((calculater.calculate(operator, buffNumber, parseFloat(displayText))).toString())
       operator = opeSym.none
-      buffNumber = 0
+      buffNumber = '0'
     }
   }
   const deleatePress = (): void => {
@@ -144,7 +147,7 @@ const CalculatorKeypad = (): JSX.Element => {
     setDisplayText('0')
     isOperatorPressed = false
     operator = opeSym.none
-    buffNumber = 0
+    buffNumber = '0'
   }
   const opePress = (symbol: opeSym): void => {
     // OpeButtonが連続して押されたときの処理
@@ -159,14 +162,11 @@ const CalculatorKeypad = (): JSX.Element => {
 
     isOperatorPressed = true
 
-    if (buffNumber === 0) {
+    if (buffNumber === '0') {
       // 現状の画面の数字を取得
-      buffNumber = parseFloat(displayText)
+      buffNumber = displayText
       // 押されたボタンの演算子のテキストを取得。
       operator = symbol
-      console.log(operator + '初期値4operator')
-      console.log(isOperatorPressed + '初期値4isOperatorPressed')
-      console.log(buffNumber + '初期値4buffnumber')
     } else {
     // イコールボタンが押されず演算子が続いた場合
       buffNumber = calculater.calculate(symbol, buffNumber, parseFloat(displayText))
