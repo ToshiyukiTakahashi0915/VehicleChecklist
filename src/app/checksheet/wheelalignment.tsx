@@ -1,22 +1,25 @@
 import React, { useState, useCallback } from 'react'
 import {
-  ScrollView, View, Text, TouchableOpacity, StyleSheet
+  ScrollView, Modal, View, Text, Dimensions,
+  TouchableOpacity, StyleSheet, Button, Alert
 } from 'react-native'
 
 import Decimal from 'decimal.js'
 
-import Header from '../../components/Header'
-
 import CalculatorKeypad from '../../components/calcratekeypad'
+// 画面の高さを取得
+const windowHeight = Dimensions.get('window').height
 
 const WheelAlignment = (): JSX.Element => {
   // 押されたセルの配列がどれかをあらわす
-  const [selectedData, setSelectedData] = useState(1)
+  const [selectedData, setSelectedData] = useState<number | null>(null)
   // 押されたセルの配列内のどこかを表す
-  const [selectedIndex, setSelectedIndex] = useState(1)
-  const [showCalculatorKeypad, setShowCalculatorKeypad] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   // calcraterkeypadに渡す現状の画面の値
   const [selectedValue, setSelectedValue] = useState('')
+  // modalを管理する値
+  const [isTopTableTup, setIsTopTableTup] = useState(false)
+  const [isButtomTableTup, setIsButtomTableTup] = useState(false)
 
   const tableHead = ['基準値', '移動量', '左輪', '左輪', '右輪', '右輪']
   const CheckTitle = ['′', 'mm', '指示値', '誤差', '指示値', '誤差']
@@ -78,9 +81,9 @@ const WheelAlignment = (): JSX.Element => {
     return (
       <TouchableOpacity
         style={styles.cell}
-        disabled={showCalculatorKeypad}
+        disabled={isTopTableTup || isButtomTableTup}
         onPress={() => {
-          if (!showCalculatorKeypad) {
+          if (!isTopTableTup || !isButtomTableTup) {
             handleCellPress(index, inputData, data)
           }
         }}
@@ -89,7 +92,7 @@ const WheelAlignment = (): JSX.Element => {
           style={{
             textAlign: 'center',
             lineHeight: 35,
-            opacity: showCalculatorKeypad ? 0.5 : 1
+            opacity: (isTopTableTup || isButtomTableTup) ? 0.5 : 1
           }}>
           {inputData[index]}
           </Text>
@@ -112,6 +115,22 @@ const WheelAlignment = (): JSX.Element => {
     )
   }
 
+  const renderModalContent = (): JSX.Element => {
+    if (isTopTableTup) {
+      return (
+      <View style={styles.topModalContainer}>
+      <CalculatorKeypad buffValue={selectedValue} onEnterPress={handleEnterPress} />
+      </View>
+      )
+    } else {
+      return (
+      <View style={styles.buttomModalContainer}>
+      <CalculatorKeypad buffValue={selectedValue} onEnterPress={handleEnterPress} />
+      </View>
+      )
+    }
+  }
+
   // 入力可能なセルがタップされた際のイベントハンドラ
   // 電卓コンポーネントの表示をtrueにしselectedIndexに
   // 渡されたindexを渡す
@@ -120,11 +139,15 @@ const WheelAlignment = (): JSX.Element => {
     setSelectedIndex(index)
     setSelectedData(dataNum)
     setSelectedValue(inputData[index])
-    setShowCalculatorKeypad(true)
+    if (dataNum >= 1 && dataNum <= 5) {
+      setIsTopTableTup(true)
+    } else {
+      setIsButtomTableTup(true)
+    }
   }, [])
 
   const handleEnterPress = useCallback((displayText: string) => {
-    if (selectedData >= 1 && selectedData <= 10) {
+    if (selectedIndex !== null && selectedData !== null && selectedData >= 1 && selectedData <= 10) {
       switch (selectedData) {
         case 1:
           setInputData1((prev) => [...prev.slice(0, selectedIndex), displayText, ...prev.slice(selectedIndex + 1)])
@@ -159,18 +182,16 @@ const WheelAlignment = (): JSX.Element => {
         default:
           break
       }
-      setSelectedData(0)
-      // 押されたセルの配列内のどこかを表す
-      setSelectedIndex(0)
-      setShowCalculatorKeypad(false)
-      // calcraterkeypadに渡す現状の画面の値
+      setSelectedData(null)
+      setSelectedIndex(null)
+      setIsTopTableTup(false)
+      setIsButtomTableTup(false)
       setSelectedValue('')
     }
   }, [selectedData])
 
   return (
     <ScrollView style={styles.container}>
-      <Header title='ホイールアライメントテスタ'/>
       <View style={styles.table}>
         <View style={styles.row}>
           <Text style={styles.headerCell}>トー精度検査表 / 許容値: ±2</Text>
@@ -244,6 +265,13 @@ const WheelAlignment = (): JSX.Element => {
         </View>
       </View>
 
+      <Modal
+        visible={isTopTableTup || isButtomTableTup}
+        transparent={true}
+      >
+        {renderModalContent()}
+      </Modal>
+
       <View style={styles.table}>
         <View style={styles.row}>
           <Text style={styles.headerCell}>キャンバ精度検査表 / 許容値: ±4</Text>
@@ -316,7 +344,7 @@ const WheelAlignment = (): JSX.Element => {
           <ErrorCalculationCell inputNum={inputData10[1]} errorNum={120}/>
         </View>
       </View>
-      {showCalculatorKeypad && <CalculatorKeypad buffValue={selectedValue} onEnterPress={handleEnterPress} />}
+      <Button onPress={() => { Alert.alert('button pressed') }} title='保存'></Button>
     </ScrollView>
   )
 }
@@ -349,6 +377,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRightColor: '#000000',
     height: 40
+  },
+  topModalContainer: {
+    position: 'absolute',
+    top: windowHeight / 2 - (410 / 2),
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  buttomModalContainer: {
+    position: 'absolute',
+    bottom: windowHeight / 2 - (410 / 2),
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
 

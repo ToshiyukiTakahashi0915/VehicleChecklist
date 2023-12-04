@@ -1,18 +1,36 @@
 import { View, StyleSheet } from 'react-native'
+import { router } from 'expo-router'
 
-import Header from '../../components/Header'
 import WorkItem from '../../components/WorkItem'
+
+const handlePress = (type: string): void => {
+  switch (type) {
+    case 'WAT':
+      router.push('/checkList/watlist')
+      break
+    case 'TRT':
+      router.push('/checkList/trtlist')
+      break
+    case 'SST':
+      router.push('/checkList/frtlist')
+      break
+    case 'BRT':
+      router.push('/checkList/brtlist')
+      break
+    default:
+      break
+  }
+}
 
 const WorkList = (): JSX.Element => {
   return (
     <View style={styles.container}>
-      <Header title='車両チェックリスト'/>
       <View style={styles.container}>
-        <WorkItem onPress={() => {}} name= 'WAT'/>
-        <WorkItem onPress={() => {}} name= 'TRT'/>
-        <WorkItem onPress={() => {}} name= 'FRT'/>
-        <WorkItem onPress={() => {}} name= 'SST'/>
-        <WorkItem onPress={() => {}} name= 'BRT'/>
+        <WorkItem onPress={() => { handlePress('WAT') }} name= 'WAT'/>
+        <WorkItem onPress={() => { handlePress('TRT') }} name= 'TRT'/>
+        <WorkItem onPress={() => { handlePress('FRT') }} name= 'FRT'/>
+        <WorkItem onPress={() => { handlePress('SST') }} name= 'SST'/>
+        <WorkItem onPress={() => { handlePress('BRT') }} name= 'BRT'/>
       </View>
     </View>
   )

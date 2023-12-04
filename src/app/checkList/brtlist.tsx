@@ -1,12 +1,10 @@
 import { View, StyleSheet } from 'react-native'
 
-import Header from '../../../components/Header'
-import WorkItem from '../../../components/WorkItem'
+import WorkItem from '../../components/WorkItem'
 
 const BRTList = (): JSX.Element => {
   return (
     <View style={styles.container}>
-      <Header title='BRT'/>
       <View style={styles.container}>
         <WorkItem onPress={() => {}} name= '1P-#1_BRT_MAC'/>
         <WorkItem onPress={() => {}} name= '1P-#2_BRT_MAC'/>
