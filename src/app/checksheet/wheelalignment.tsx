@@ -1,14 +1,15 @@
 import React, { useState, useCallback } from 'react'
 import {
-  ScrollView, Modal, View, Text, Dimensions,
-  TouchableOpacity, StyleSheet, Button, Alert
+  Modal, View, Text, Dimensions,
+  StyleSheet, Alert, Pressable
 } from 'react-native'
 
 import Decimal from 'decimal.js'
 
 import CalculatorKeypad from '../../components/calcratekeypad'
-// 画面の高さを取得
-const windowHeight = Dimensions.get('window').height
+import CostomButton from '../../components/coustomButton'
+
+const cellHeight = (Dimensions.get('window').height - 517) / 10
 
 const WheelAlignment = (): JSX.Element => {
   // 押されたセルの配列がどれかをあらわす
@@ -79,8 +80,8 @@ const WheelAlignment = (): JSX.Element => {
         inputData = inputData1
     }
     return (
-      <TouchableOpacity
-        style={styles.cell}
+      <Pressable
+        style={styles.inputCell}
         disabled={isTopTableTup || isButtomTableTup}
         onPress={() => {
           if (!isTopTableTup || !isButtomTableTup) {
@@ -90,13 +91,11 @@ const WheelAlignment = (): JSX.Element => {
       >
         <Text
           style={{
-            textAlign: 'center',
-            lineHeight: 35,
             opacity: (isTopTableTup || isButtomTableTup) ? 0.5 : 1
           }}>
           {inputData[index]}
           </Text>
-      </TouchableOpacity>
+      </Pressable>
     )
   }
 
@@ -124,7 +123,7 @@ const WheelAlignment = (): JSX.Element => {
       )
     } else {
       return (
-      <View style={styles.buttomModalContainer}>
+      <View style={styles.bottomModalContainer}>
       <CalculatorKeypad buffValue={selectedValue} onEnterPress={handleEnterPress} />
       </View>
       )
@@ -191,7 +190,11 @@ const WheelAlignment = (): JSX.Element => {
   }, [selectedData])
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
+      <Text
+      style={styles.titleText}>
+        ホイールアライメントテスタ 更新前 前輪
+        </Text>
       <View style={styles.table}>
         <View style={styles.row}>
           <Text style={styles.headerCell}>トー精度検査表 / 許容値: ±2</Text>
@@ -344,8 +347,15 @@ const WheelAlignment = (): JSX.Element => {
           <ErrorCalculationCell inputNum={inputData10[1]} errorNum={120}/>
         </View>
       </View>
-      <Button onPress={() => { Alert.alert('button pressed') }} title='保存'></Button>
-    </ScrollView>
+      <View>
+        <View style={styles.saveBottonStyle}>
+          <CostomButton buttonTitle='保存' onButtonPress={() => { Alert.alert('保存が押されました。') }} ></CostomButton>
+        </View>
+        <View style={styles.nextBottonStyle}>
+          <CostomButton buttonTitle='次へ' onButtonPress={() => { Alert.alert('次へが押されました。') }} ></CostomButton>
+        </View>
+      </View>
+    </View>
   )
 }
 
@@ -354,9 +364,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff'
   },
+  titleText: {
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 20,
+    fontSize: 24,
+    fontWeight: 'bold',
+    height: 32
+  },
   table: {
-    padding: 10,
-    margin: 10
+    marginTop: 10,
+    marginBottom: 10,
+    marginRight: 20,
+    marginLeft: 20
   },
   row: {
     flexDirection: 'row',
@@ -368,7 +388,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     borderWidth: 1,
     borderRightColor: '#000000',
-    paddingVertical: 5
+    paddingVertical: 5,
+    height: 35
+  },
+  inputCell: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderRightColor: '#000000',
+    height: cellHeight
   },
   cell: {
     flex: 1,
@@ -376,19 +405,42 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     borderWidth: 1,
     borderRightColor: '#000000',
-    height: 40
+    height: cellHeight
   },
   topModalContainer: {
     position: 'absolute',
-    top: windowHeight / 2 - (410 / 2),
+    bottom: 65,
+    left: 0,
+    right: 0,
     alignItems: 'center',
     justifyContent: 'center'
   },
-  buttomModalContainer: {
+  bottomModalContainer: {
     position: 'absolute',
-    bottom: windowHeight / 2 - (410 / 2),
+    left: 0,
+    right: 0,
+    top: 65,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  bottonStyle: {
+    position: 'absolute',
+    justifyContent: 'center'
+  },
+  saveBottonStyle: {
+    marginTop: 10,
+    marginBottom: 10,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  nextBottonStyle: {
+    marginTop: 10,
+    marginBottom: 10,
+    position: 'absolute',
+    right: 16
   }
 })
 
