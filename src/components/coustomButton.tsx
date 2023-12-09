@@ -2,14 +2,15 @@ import { StyleSheet, Button, View } from 'react-native'
 
 interface ButtonProps {
   buttonTitle: string
-  onButtonPress: () => void
+  onButtonPress?: () => void
+  buttonDisabled?: boolean
 }
 
 const CostomButton = (props: ButtonProps): JSX.Element => {
-  const { buttonTitle, onButtonPress } = props
+  const { buttonTitle, onButtonPress, buttonDisabled } = props
   return (
     <View style={styles.bottonStyle}>
-      <Button onPress={ onButtonPress } title={buttonTitle}></Button>
+      <Button onPress={ onButtonPress } title={buttonTitle} disabled={buttonDisabled}></Button>
     </View>
   )
 }

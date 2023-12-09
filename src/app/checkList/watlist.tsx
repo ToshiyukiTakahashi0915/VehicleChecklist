@@ -4,7 +4,7 @@ import { router } from 'expo-router'
 import WorkItem from '../../components/WorkItem'
 
 const handlePress = (): void => {
-  router.push('/checksheet/wheelalignment')
+  router.push('/checksheet/wheelalignment/wheelalignment1')
 }
 
 const WATList = (): JSX.Element => {
