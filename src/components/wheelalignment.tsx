@@ -15,14 +15,15 @@ interface checkSheetProps {
   onNextButton?: () => void
   BackButtonDisabled?: boolean
   onBackButton?: () => void
+  sheetKey: string
+  CheckValues: any
+  SetCheckValues: any
 }
 
 const cellHeight = (Dimensions.get('window').height - 517) / 10
 
 const WheelAlignment = (props: checkSheetProps): JSX.Element => {
-  const { checkSheetTitle, NextButtonDisabled, onNextButton, BackButtonDisabled, onBackButton } = props
-  // 押されたセルの配列がどれかをあらわす
-  const [selectedData, setSelectedData] = useState<number | null>(null)
+  const { checkSheetTitle, NextButtonDisabled, onNextButton, BackButtonDisabled, onBackButton, sheetKey, CheckValues, SetCheckValues } = props
   // 押されたセルの配列内のどこかを表す
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   // calcraterkeypadに渡す現状の画面の値
@@ -39,62 +40,15 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
   const tableData4 = ['90', '22.05']
   const tableData5 = ['120', '26.06']
 
-  const [inputData1, setInputData1] = useState(['0', '0'])
-  const [inputData2, setInputData2] = useState(['0', '0'])
-  const [inputData3, setInputData3] = useState(['0', '0'])
-  const [inputData4, setInputData4] = useState(['0', '0'])
-  const [inputData5, setInputData5] = useState(['0', '0'])
-
-  const [inputData6, setInputData6] = useState(['0', '0'])
-  const [inputData7, setInputData7] = useState(['0', '0'])
-  const [inputData8, setInputData8] = useState(['0', '0'])
-  const [inputData9, setInputData9] = useState(['0', '0'])
-  const [inputData10, setInputData10] = useState(['0', '0'])
-
-  const InputCell = ({ data, index }: { data: number, index: number }): JSX.Element => {
-    let inputData: string[]
-    // 与えられたdataに応じて適切なinputDataを選択
-    switch (data) {
-      case 1:
-        inputData = inputData1
-        break
-      case 2:
-        inputData = inputData2
-        break
-      case 3:
-        inputData = inputData3
-        break
-      case 4:
-        inputData = inputData4
-        break
-      case 5:
-        inputData = inputData5
-        break
-      case 6:
-        inputData = inputData6
-        break
-      case 7:
-        inputData = inputData7
-        break
-      case 8:
-        inputData = inputData8
-        break
-      case 9:
-        inputData = inputData9
-        break
-      case 10:
-        inputData = inputData10
-        break
-      default:
-        inputData = inputData1
-    }
+  const InputCell = ({ index }: { index: number }): JSX.Element => {
+    const value = CheckValues[index]
     return (
       <Pressable
         style={styles.inputCell}
         disabled={isTopTableTup || isButtomTableTup}
         onPress={() => {
           if (!isTopTableTup || !isButtomTableTup) {
-            handleCellPress(index, inputData, data)
+            handleCellPress(index, value)
           }
         }}
       >
@@ -102,12 +56,11 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
           style={{
             opacity: (isTopTableTup || isButtomTableTup) ? 0.5 : 1
           }}>
-          {inputData[index]}
+          {value}
           </Text>
       </Pressable>
     )
   }
-
   const ErrorCalculationCell =
   ({ inputNum, errorNum }: { inputNum: string, errorNum: number }): JSX.Element => {
     const InputNum = new Decimal(inputNum)
@@ -138,66 +91,31 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
       )
     }
   }
-
   // 入力可能なセルがタップされた際のイベントハンドラ
   // 電卓コンポーネントの表示をtrueにしselectedIndexに
   // 渡されたindexを渡す
   // setSelectedValueで現状の画面の値を電卓に渡す
-  const handleCellPress = useCallback((index: number, inputData: string[], dataNum: number): void => {
+  const handleCellPress = useCallback((index: number, carrentValue: string): void => {
     setSelectedIndex(index)
-    setSelectedData(dataNum)
-    setSelectedValue(inputData[index])
-    if (dataNum >= 1 && dataNum <= 5) {
-      setIsTopTableTup(true)
-    } else {
-      setIsButtomTableTup(true)
-    }
+    setSelectedValue(carrentValue)
+    setIsTopTableTup(index < 10)
+    setIsButtomTableTup(index >= 10)
   }, [])
-
   const handleEnterPress = useCallback((displayText: string) => {
-    if (selectedIndex !== null && selectedData !== null && selectedData >= 1 && selectedData <= 10) {
-      switch (selectedData) {
-        case 1:
-          setInputData1((prev) => [...prev.slice(0, selectedIndex), displayText, ...prev.slice(selectedIndex + 1)])
-          break
-        case 2:
-          setInputData2((prev) => [...prev.slice(0, selectedIndex), displayText, ...prev.slice(selectedIndex + 1)])
-          break
-        case 3:
-          setInputData3((prev) => [...prev.slice(0, selectedIndex), displayText, ...prev.slice(selectedIndex + 1)])
-          break
-        case 4:
-          setInputData4((prev) => [...prev.slice(0, selectedIndex), displayText, ...prev.slice(selectedIndex + 1)])
-          break
-        case 5:
-          setInputData5((prev) => [...prev.slice(0, selectedIndex), displayText, ...prev.slice(selectedIndex + 1)])
-          break
-        case 6:
-          setInputData6((prev) => [...prev.slice(0, selectedIndex), displayText, ...prev.slice(selectedIndex + 1)])
-          break
-        case 7:
-          setInputData7((prev) => [...prev.slice(0, selectedIndex), displayText, ...prev.slice(selectedIndex + 1)])
-          break
-        case 8:
-          setInputData8((prev) => [...prev.slice(0, selectedIndex), displayText, ...prev.slice(selectedIndex + 1)])
-          break
-        case 9:
-          setInputData9((prev) => [...prev.slice(0, selectedIndex), displayText, ...prev.slice(selectedIndex + 1)])
-          break
-        case 10:
-          setInputData10((prev) => [...prev.slice(0, selectedIndex), displayText, ...prev.slice(selectedIndex + 1)])
-          break
-        default:
-          break
-      }
-      setSelectedData(null)
+    if (selectedIndex !== null && selectedIndex >= 0 && selectedIndex <= 19) {
+      console.log('変更前の値:', CheckValues[0])
+      console.log('displayText:', displayText)
+      console.log('selectedIndex:', selectedIndex)
+      console.log('sheetKey:', sheetKey)
+      const newValues = CheckValues.splice(selectedIndex, 1, displayText)
+      SetCheckValues(newValues)
+      console.log('変更後の値:', CheckValues[0])
       setSelectedIndex(null)
       setIsTopTableTup(false)
       setIsButtomTableTup(false)
       setSelectedValue('')
     }
-  }, [selectedData])
-
+  }, [selectedIndex])
   return (
     <View style={styles.container}>
       <Text
@@ -234,46 +152,46 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData1[0]}</Text>
           <Text style={styles.cell}>{tableData1[1]}</Text>
-          <InputCell data={1} index= {0}/>
-          <ErrorCalculationCell inputNum={inputData1[0]} errorNum={0}/>
-          <InputCell data={1} index= {1}/>
-          <ErrorCalculationCell inputNum={inputData1[1]} errorNum={0}/>
+          <InputCell index= {0}/>
+          <ErrorCalculationCell inputNum={CheckValues[0]} errorNum={0}/>
+          <InputCell index= {1}/>
+          <ErrorCalculationCell inputNum={CheckValues[1]} errorNum={0}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData2[0]}</Text>
           <Text style={styles.cell}>{tableData2[1]}</Text>
-          <InputCell data={2} index= {0}/>
-          <ErrorCalculationCell inputNum={inputData2[0]} errorNum={30}/>
-          <InputCell data={2} index= {1}/>
-          <ErrorCalculationCell inputNum={inputData2[1]} errorNum={30}/>
+          <InputCell index= {2}/>
+          <ErrorCalculationCell inputNum={CheckValues[2]} errorNum={30}/>
+          <InputCell index= {3}/>
+          <ErrorCalculationCell inputNum={CheckValues[3]} errorNum={30}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData3[0]}</Text>
           <Text style={styles.cell}>{tableData3[1]}</Text>
-          <InputCell data={3} index= {0}/>
-          <ErrorCalculationCell inputNum={inputData3[0]} errorNum={60}/>
-          <InputCell data={3} index= {1}/>
-          <ErrorCalculationCell inputNum={inputData3[1]} errorNum={60}/>
+          <InputCell index= {4}/>
+          <ErrorCalculationCell inputNum={CheckValues[4]} errorNum={60}/>
+          <InputCell index= {5}/>
+          <ErrorCalculationCell inputNum={CheckValues[sheetKey][5]} errorNum={60}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData4[0]}</Text>
           <Text style={styles.cell}>{tableData4[1]}</Text>
-          <InputCell data={4} index= {0}/>
-          <ErrorCalculationCell inputNum={inputData4[0]} errorNum={90}/>
-          <InputCell data={4} index= {1}/>
-          <ErrorCalculationCell inputNum={inputData4[1]} errorNum={90}/>
+          <InputCell index= {6}/>
+          <ErrorCalculationCell inputNum={CheckValues[6]} errorNum={90}/>
+          <InputCell index= {7}/>
+          <ErrorCalculationCell inputNum={CheckValues[7]} errorNum={90}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData5[0]}</Text>
           <Text style={styles.cell}>{tableData5[1]}</Text>
-          <InputCell data={5} index= {0}/>
-          <ErrorCalculationCell inputNum={inputData5[0]} errorNum={120}/>
-          <InputCell data={5} index= {1}/>
-          <ErrorCalculationCell inputNum={inputData5[1]} errorNum={120}/>
+          <InputCell index= {8}/>
+          <ErrorCalculationCell inputNum={CheckValues[8]} errorNum={120}/>
+          <InputCell index= {9}/>
+          <ErrorCalculationCell inputNum={CheckValues[9]} errorNum={120}/>
         </View>
       </View>
 
@@ -314,46 +232,46 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData1[0]}</Text>
           <Text style={styles.cell}>{tableData1[1]}</Text>
-          <InputCell data={6} index= {0}/>
-          <ErrorCalculationCell inputNum={inputData6[0]} errorNum={0}/>
-          <InputCell data={6} index= {1}/>
-          <ErrorCalculationCell inputNum={inputData6[1]} errorNum={0}/>
+          <InputCell index= {10}/>
+          <ErrorCalculationCell inputNum={CheckValues[10]} errorNum={0}/>
+          <InputCell index= {11}/>
+          <ErrorCalculationCell inputNum={CheckValues[11]} errorNum={0}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData2[0]}</Text>
           <Text style={styles.cell}>{tableData2[1]}</Text>
-          <InputCell data={7} index= {0}/>
-          <ErrorCalculationCell inputNum={inputData7[0]} errorNum={30}/>
-          <InputCell data={7} index= {1}/>
-          <ErrorCalculationCell inputNum={inputData7[1]} errorNum={30}/>
+          <InputCell index= {12}/>
+          <ErrorCalculationCell inputNum={CheckValues[12]} errorNum={30}/>
+          <InputCell index= {13}/>
+          <ErrorCalculationCell inputNum={CheckValues[13]} errorNum={30}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData3[0]}</Text>
           <Text style={styles.cell}>{tableData3[1]}</Text>
-          <InputCell data={8} index= {0}/>
-          <ErrorCalculationCell inputNum={inputData8[0]} errorNum={60}/>
-          <InputCell data={8} index= {1}/>
-          <ErrorCalculationCell inputNum={inputData8[1]} errorNum={60}/>
+          <InputCell index= {14}/>
+          <ErrorCalculationCell inputNum={CheckValues[14]} errorNum={60}/>
+          <InputCell index= {15}/>
+          <ErrorCalculationCell inputNum={CheckValues[15]} errorNum={60}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData4[0]}</Text>
           <Text style={styles.cell}>{tableData4[1]}</Text>
-          <InputCell data={9} index= {0}/>
-          <ErrorCalculationCell inputNum={inputData9[0]} errorNum={90}/>
-          <InputCell data={9} index= {1}/>
-          <ErrorCalculationCell inputNum={inputData9[1]} errorNum={90}/>
+          <InputCell index= {16}/>
+          <ErrorCalculationCell inputNum={CheckValues[16]} errorNum={90}/>
+          <InputCell index= {17}/>
+          <ErrorCalculationCell inputNum={CheckValues[17]} errorNum={90}/>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.cell}>{tableData5[0]}</Text>
           <Text style={styles.cell}>{tableData5[1]}</Text>
-          <InputCell data={10} index= {0}/>
-          <ErrorCalculationCell inputNum={inputData10[0]} errorNum={120}/>
-          <InputCell data={10} index= {1}/>
-          <ErrorCalculationCell inputNum={inputData10[1]} errorNum={120}/>
+          <InputCell index= {18}/>
+          <ErrorCalculationCell inputNum={CheckValues[18]} errorNum={120}/>
+          <InputCell index= {19}/>
+          <ErrorCalculationCell inputNum={CheckValues[19]} errorNum={120}/>
         </View>
       </View>
       <View>

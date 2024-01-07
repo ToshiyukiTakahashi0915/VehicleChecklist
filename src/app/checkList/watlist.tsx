@@ -7,7 +7,7 @@ const handlePress = (): void => {
   router.push('/checksheet/wheelalignment/wheelalignment1')
 }
 
-const WATList = (): JSX.Element => {
+const watList = (): JSX.Element => {
   return (
     <View style={styles.container}>
       <View style={styles.container}>
@@ -28,4 +28,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default WATList
+export default watList

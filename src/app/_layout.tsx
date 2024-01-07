@@ -1,7 +1,10 @@
 import { Stack } from 'expo-router'
+import { RecoilRoot } from 'recoil'
 
 const Layout = (): JSX.Element => {
-  return <Stack screenOptions={{
+  return (
+  <RecoilRoot>
+  <Stack screenOptions={{
     headerStyle: {
       backgroundColor: '#467FD3'
     },
@@ -14,6 +17,7 @@ const Layout = (): JSX.Element => {
       fontWeight: 'bold'
     }
   }}/>
+  </RecoilRoot>)
 }
 
 export default Layout
