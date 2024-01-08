@@ -15,15 +15,14 @@ interface checkSheetProps {
   onNextButton?: () => void
   BackButtonDisabled?: boolean
   onBackButton?: () => void
-  sheetKey: string
-  CheckValues: any
+  CheckValues: string[]
   SetCheckValues: any
 }
 
 const cellHeight = (Dimensions.get('window').height - 517) / 10
 
 const WheelAlignment = (props: checkSheetProps): JSX.Element => {
-  const { checkSheetTitle, NextButtonDisabled, onNextButton, BackButtonDisabled, onBackButton, sheetKey, CheckValues, SetCheckValues } = props
+  const { checkSheetTitle, NextButtonDisabled, onNextButton, BackButtonDisabled, onBackButton, CheckValues, SetCheckValues } = props
   // 押されたセルの配列内のどこかを表す
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   // calcraterkeypadに渡す現状の画面の値
@@ -103,13 +102,13 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
   }, [])
   const handleEnterPress = useCallback((displayText: string) => {
     if (selectedIndex !== null && selectedIndex >= 0 && selectedIndex <= 19) {
-      console.log('変更前の値:', CheckValues[0])
-      console.log('displayText:', displayText)
-      console.log('selectedIndex:', selectedIndex)
-      console.log('sheetKey:', sheetKey)
-      const newValues = CheckValues.splice(selectedIndex, 1, displayText)
+      const newValues = CheckValues.map((value, i) => {
+        if (selectedIndex === i) {
+          return displayText
+        }
+        return value
+      })
       SetCheckValues(newValues)
-      console.log('変更後の値:', CheckValues[0])
       setSelectedIndex(null)
       setIsTopTableTup(false)
       setIsButtomTableTup(false)
@@ -173,7 +172,7 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
           <InputCell index= {4}/>
           <ErrorCalculationCell inputNum={CheckValues[4]} errorNum={60}/>
           <InputCell index= {5}/>
-          <ErrorCalculationCell inputNum={CheckValues[sheetKey][5]} errorNum={60}/>
+          <ErrorCalculationCell inputNum={CheckValues[5]} errorNum={60}/>
         </View>
 
         <View style={styles.row}>

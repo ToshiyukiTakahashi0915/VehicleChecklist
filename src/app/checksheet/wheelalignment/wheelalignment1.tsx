@@ -16,7 +16,6 @@ const WheelAlignment1 = (): JSX.Element => {
         checkSheetTitle='ホイールアライメントテスタ 校正前 前輪'
         onNextButton={handleNextPress}
         BackButtonDisabled={true}
-        sheetKey='wheelalignment1'
         CheckValues={checkValues}
         SetCheckValues={setCheckValues}/>
     </View>
