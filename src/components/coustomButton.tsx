@@ -2,7 +2,7 @@ import { StyleSheet, Button, View } from 'react-native'
 
 interface ButtonProps {
   buttonTitle: string
-  onButtonPress?: () => void
+  onButtonPress?: () => any
   buttonDisabled?: boolean
 }
 

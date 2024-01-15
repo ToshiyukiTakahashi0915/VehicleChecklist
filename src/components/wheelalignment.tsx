@@ -1,13 +1,14 @@
 import React, { useState, useCallback } from 'react'
 import {
   Modal, View, Text, Dimensions,
-  StyleSheet, Pressable, Alert
+  StyleSheet, Pressable
 } from 'react-native'
 
 import Decimal from 'decimal.js'
 
 import CalculatorKeypad from './calcratekeypad'
 import CostomButton from './coustomButton'
+import { saveButtonPress } from '../function/save'
 
 interface checkSheetProps {
   checkSheetTitle: string
@@ -115,6 +116,7 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
       setSelectedValue('')
     }
   }, [selectedIndex])
+
   return (
     <View style={styles.container}>
       <Text
@@ -281,7 +283,7 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
           buttonDisabled={BackButtonDisabled} ></CostomButton>
         </View>
         <View style={styles.saveButtonStyle}>
-          <CostomButton buttonTitle='保存' onButtonPress={() => { Alert.alert('保存が押されました。') }} ></CostomButton>
+          <CostomButton buttonTitle='保存' onButtonPress={saveButtonPress} ></CostomButton>
         </View>
         <View style={styles.nextButtonStyle}>
           <CostomButton buttonTitle='次へ'
