@@ -276,7 +276,7 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
         </View>
       </View>
       <View>
-      <View style={styles.backButtonStyle}>
+        <View style={styles.backButtonStyle}>
           <CostomButton
           buttonTitle='戻る'
           onButtonPress={onBackButton}
