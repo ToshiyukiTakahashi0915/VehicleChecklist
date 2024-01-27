@@ -3,6 +3,11 @@ import {
   Modal, View, Text, Dimensions,
   StyleSheet, Pressable
 } from 'react-native'
+import { useRecoilValue } from 'recoil'
+import {
+  wheelalignment1Atom, wheelalignment2Atom,
+  wheelalignment3Atom, wheelalignment4Atom
+} from '../app/atom/checkSheetAtom'
 
 import Decimal from 'decimal.js'
 
@@ -24,6 +29,11 @@ const cellHeight = (Dimensions.get('window').height - 517) / 10
 
 const WheelAlignment = (props: checkSheetProps): JSX.Element => {
   const { checkSheetTitle, NextButtonDisabled, onNextButton, BackButtonDisabled, onBackButton, CheckValues, SetCheckValues } = props
+  // Recoilの値を取得。
+  const wheelalignment1Data = useRecoilValue(wheelalignment1Atom)
+  const wheelalignment2Data = useRecoilValue(wheelalignment2Atom)
+  const wheelalignment3Data = useRecoilValue(wheelalignment3Atom)
+  const wheelalignment4Data = useRecoilValue(wheelalignment4Atom)
   // 押されたセルの配列内のどこかを表す
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   // calcraterkeypadに渡す現状の画面の値
@@ -116,6 +126,18 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
       setSelectedValue('')
     }
   }, [selectedIndex])
+
+  const handleSavePress = async (): Promise<void> => {
+    // 4つのRecoilの状態を1つの配列に結合
+    const combinedData = [
+      ...wheelalignment1Data,
+      ...wheelalignment2Data,
+      ...wheelalignment3Data,
+      ...wheelalignment4Data
+    ]
+    // 保存処理を実行
+    await saveButtonPress(combinedData, 'wheelalignment')
+  }
 
   return (
     <View style={styles.container}>
@@ -276,14 +298,14 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
         </View>
       </View>
       <View>
-        <View style={styles.backButtonStyle}>
+      <View style={styles.backButtonStyle}>
           <CostomButton
           buttonTitle='戻る'
           onButtonPress={onBackButton}
           buttonDisabled={BackButtonDisabled} ></CostomButton>
         </View>
         <View style={styles.saveButtonStyle}>
-          <CostomButton buttonTitle='保存' onButtonPress={saveButtonPress} ></CostomButton>
+          <CostomButton buttonTitle='保存' onButtonPress={handleSavePress} ></CostomButton>
         </View>
         <View style={styles.nextButtonStyle}>
           <CostomButton buttonTitle='次へ'

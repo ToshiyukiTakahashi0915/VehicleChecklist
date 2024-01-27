@@ -10,20 +10,13 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
-<<<<<<< HEAD
     "base64-js": "^1.5.1",
-=======
->>>>>>> 72c633bde84192c72c6eeedfa37c2fda9af83648
     "decimal.js": "^10.4.3",
+    "exceljs": "^4.4.0",
     "expo": "~49.0.15",
     "expo-asset": "~8.10.1",
     "expo-constants": "~14.4.2",
-<<<<<<< HEAD
     "expo-file-system": "~15.4.5",
-=======
-    "expo-document-picker": "^11.7.0",
-    "expo-file-system": "^15.6.0",
->>>>>>> 72c633bde84192c72c6eeedfa37c2fda9af83648
     "expo-linking": "~5.0.2",
     "expo-router": "^2.0.0",
     "expo-splash-screen": "~0.20.5",
@@ -38,10 +31,11 @@
     "react-native-table-component": "^1.2.2",
     "react-native-web": "~0.19.6",
     "recoil": "^0.7.7",
-    "xlsx": "^0.18.5"
+    "expo-media-library": "~15.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@types/json2csv": "^5.0.7",
     "@types/react": "~18.2.14",
     "@types/react-native-table-component": "^1.2.6",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
