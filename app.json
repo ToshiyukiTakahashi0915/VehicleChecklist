@@ -1,6 +1,6 @@
 {
   "expo": {
-    "scheme": "VehicleChecklist",
+    "scheme": ["vehiclechecklist"],
     "name": "VehicleChecklist",
     "slug": "VehicleChecklist",
     "version": "1.0.0",
@@ -30,9 +30,7 @@
     },
     "plugins": [
       "expo-router"
-    ],
-    "sdkVersion": "49.0.0",
-    "entryPoint": ".vscode\\exponentIndex.js"
+    ]
   },
   "name": "vehiclechecklist"
 }
