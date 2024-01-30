@@ -61,7 +61,7 @@ export async function saveButtonPress (data: string[], workName: string): Promis
         text: 'はい',
         onPress: () => {
           handleSave(data, 'wheelalignment').then(() => {
-            console.log('2.保存が完了しました。')
+            console.log('保存が完了しました。')
           }).catch((error) => {
             console.error(`2.保存に失敗しました: ${error}`)
           })
