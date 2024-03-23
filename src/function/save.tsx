@@ -1,4 +1,3 @@
-import { Alert } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 
 // 配列をCSVファイルに変換する関数
@@ -6,7 +5,7 @@ const arrayToCsvString = (data: string[]): string => {
   return data.join(',')
 }
 
-async function handleSave (data: string[], workName: string): Promise<void> {
+export async function handleSave (data: string[], workName: string): Promise<void> {
   let uri = null
   try {
     // ユーザーにディレクトリを選択させる
@@ -45,29 +44,4 @@ async function handleSave (data: string[], workName: string): Promise<void> {
   } else {
     console.log('permissionsがnullです。')
   }
-}
-
-export async function saveButtonPress (data: string[], workName: string): Promise<void> {
-  Alert.alert(
-    '保存',
-    '保存を実行します。\n実行後はすべての値が初期値に戻ります。',
-    [
-      {
-        text: 'いいえ',
-        onPress: () => { console.log('いいえが押されました。') },
-        style: 'cancel'
-      },
-      {
-        text: 'はい',
-        onPress: () => {
-          handleSave(data, 'wheelalignment').then(() => {
-            console.log('保存が完了しました。')
-          }).catch((error) => {
-            console.error(`2.保存に失敗しました: ${error}`)
-          })
-        }
-      }
-    ],
-    { cancelable: true }
-  )
 }

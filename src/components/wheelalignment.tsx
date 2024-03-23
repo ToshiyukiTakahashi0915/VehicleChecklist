@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import {
   Modal, View, Text, Dimensions,
-  StyleSheet, Pressable
+  StyleSheet, Pressable, Alert
 } from 'react-native'
 import { useRecoilState } from 'recoil'
 import {
@@ -13,7 +13,7 @@ import Decimal from 'decimal.js'
 
 import CalculatorKeypad from './calcratekeypad'
 import CostomButton from './coustomButton'
-import { saveButtonPress } from '../function/save'
+import { handleSave } from '../function/save'
 
 interface checkSheetProps {
   checkSheetTitle: string
@@ -135,13 +135,33 @@ const WheelAlignment = (props: checkSheetProps): JSX.Element => {
       ...wheelalignment3Data,
       ...wheelalignment4Data
     ]
-    // 保存処理を実行
-    await saveButtonPress(combinedData, 'wheelalignment')
     // wheelalignmentを初期化
-    setwheelalignment1Data(Array(20).fill('0'))
-    setwheelalignment2Data(Array(20).fill('0'))
-    setwheelalignment3Data(Array(20).fill('0'))
-    setwheelalignment4Data(Array(20).fill('0'))
+    Alert.alert(
+      '保存',
+      '保存を実行します。\n実行後はすべての値が初期値に戻ります。',
+      [
+        {
+          text: 'いいえ',
+          onPress: () => { console.log('いいえが押されました。') },
+          style: 'cancel'
+        },
+        {
+          text: 'はい',
+          onPress: () => {
+            handleSave(combinedData, 'wheelalignment').then(() => {
+              console.log('保存が完了しました。')
+              setwheelalignment1Data(Array(20).fill('0'))
+              setwheelalignment2Data(Array(20).fill('0'))
+              setwheelalignment3Data(Array(20).fill('0'))
+              setwheelalignment4Data(Array(20).fill('0'))
+            }).catch((error: any) => {
+              console.error(`2.保存に失敗しました: ${error}`)
+            })
+          }
+        }
+      ],
+      { cancelable: true }
+    )
   }
 
   return (
